@@ -7,6 +7,8 @@
  *      INCLUDES
  *********************/
 
+#include "../lv_image_decoder_private.h"
+#include "../lv_draw_vector_private.h"
 #include "lv_draw_vg_lite.h"
 
 #if LV_USE_DRAW_VG_LITE && LV_USE_VECTOR_GRAPHIC
@@ -28,7 +30,7 @@
  **********************/
 
 typedef void * path_drop_data_t;
-typedef void (*path_drop_func_t)(struct _lv_draw_vg_lite_unit_t *, path_drop_data_t);
+typedef void (*path_drop_func_t)(struct lv_draw_vg_lite_unit_t *, path_drop_data_t);
 
 /**********************
  *  STATIC PROTOTYPES
@@ -62,7 +64,7 @@ void lv_draw_vg_lite_vector(lv_draw_unit_t * draw_unit, const lv_draw_vector_tas
         return;
 
     LV_PROFILER_BEGIN;
-    _lv_vector_for_each_destroy_tasks(dsc->task_list, task_draw_cb, draw_unit);
+    lv_vector_for_each_destroy_tasks(dsc->task_list, task_draw_cb, draw_unit);
     LV_PROFILER_END;
 }
 
@@ -215,7 +217,7 @@ static void task_draw_cb(void * ctx, const lv_vector_path_t * path, const lv_vec
                 /* draw image */
                 vg_lite_buffer_t image_buffer;
                 lv_image_decoder_dsc_t decoder_dsc;
-                if(lv_vg_lite_buffer_open_image(&image_buffer, &decoder_dsc, dsc->fill_dsc.img_dsc.src, false)) {
+                if(lv_vg_lite_buffer_open_image(&image_buffer, &decoder_dsc, dsc->fill_dsc.img_dsc.src, false, true)) {
                     /* Calculate pattern matrix. Should start from path bond box, and also apply fill matrix. */
                     lv_matrix_t m = dsc->matrix;
                     lv_matrix_translate(&m, min_x, min_y);
@@ -249,7 +251,15 @@ static void task_draw_cb(void * ctx, const lv_vector_path_t * path, const lv_vec
             break;
         case LV_VECTOR_DRAW_STYLE_GRADIENT: {
                 vg_lite_matrix_t grad_matrix;
-                lv_vg_lite_matrix(&grad_matrix, &dsc->fill_dsc.matrix);
+                vg_lite_identity(&grad_matrix);
+
+#if !LV_USE_VG_LITE_THORVG
+                /* Workaround inconsistent matrix behavior between device and ThorVG */
+                lv_vg_lite_matrix_multiply(&grad_matrix, &matrix);
+#endif
+                vg_lite_matrix_t fill_matrix;
+                lv_vg_lite_matrix(&fill_matrix, &dsc->fill_dsc.matrix);
+                lv_vg_lite_matrix_multiply(&grad_matrix, &fill_matrix);
 
                 lv_vg_lite_draw_grad(
                     u,

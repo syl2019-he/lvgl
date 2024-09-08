@@ -1,5 +1,6 @@
 #if LV_BUILD_TEST
 #include "../lvgl.h"
+#include "../../lvgl_private.h"
 
 #include "unity/unity.h"
 
@@ -268,6 +269,57 @@ void test_obj_property_name(void)
 
     /*OBJ flags*/
     TEST_ASSERT_EQUAL_UINT32(LV_PROPERTY_OBJ_FLAG_CLICKABLE, lv_obj_property_get_id(obj, "flag_clickable"));
+#endif
+}
+
+void test_obj_class_property(void)
+{
+#if LV_USE_OBJ_PROPERTY && LV_USE_OBJ_PROPERTY_NAME
+    /* An image obj has align property */
+    lv_obj_t * img = lv_image_create(lv_screen_active());
+    TEST_ASSERT_EQUAL_UINT32(LV_PROPERTY_OBJ_ALIGN, lv_obj_property_get_id(img, "align"));
+
+    /* obj class has align property but image doesn't. */
+    TEST_ASSERT_EQUAL_UINT32(LV_PROPERTY_OBJ_ALIGN, lv_obj_class_property_get_id(&lv_obj_class, "align"));
+    TEST_ASSERT_EQUAL_UINT32(LV_PROPERTY_ID_INVALID, lv_obj_class_property_get_id(&lv_image_class, "align"));
+
+    /* style can also have property name that conflicts with obj */
+    TEST_ASSERT_EQUAL_UINT32(LV_PROPERTY_STYLE_X, lv_style_property_get_id("x"));
+    TEST_ASSERT_EQUAL_UINT32(LV_PROPERTY_OBJ_X, lv_obj_property_get_id(img, "x"));
+#endif
+}
+
+void test_label_properties(void)
+{
+#if LV_USE_OBJ_PROPERTY
+    lv_obj_t * obj = lv_label_create(lv_screen_active());
+    lv_property_t prop = { };
+
+    prop.id = LV_PROPERTY_LABEL_TEXT;
+    prop.ptr = "Hello world";
+    TEST_ASSERT_TRUE(lv_obj_set_property(obj, &prop) == LV_RESULT_OK);
+    TEST_ASSERT_EQUAL_STRING("Hello world", lv_label_get_text(obj));
+    TEST_ASSERT_EQUAL_STRING("Hello world", lv_obj_get_property(obj, LV_PROPERTY_LABEL_TEXT).ptr);
+
+    prop.id = LV_PROPERTY_LABEL_LONG_MODE;
+    prop.num = LV_LABEL_LONG_SCROLL;
+    TEST_ASSERT_TRUE(lv_obj_set_property(obj, &prop) == LV_RESULT_OK);
+    TEST_ASSERT_EQUAL_INT(LV_LABEL_LONG_SCROLL, lv_label_get_long_mode(obj));
+    TEST_ASSERT_EQUAL_INT(LV_LABEL_LONG_SCROLL, lv_obj_get_property(obj, LV_PROPERTY_LABEL_LONG_MODE).num);
+
+#if LV_LABEL_TEXT_SELECTION
+    prop.id = LV_PROPERTY_LABEL_TEXT_SELECTION_START;
+    prop.num = 2;
+    TEST_ASSERT_TRUE(lv_obj_set_property(obj, &prop) == LV_RESULT_OK);
+    TEST_ASSERT_EQUAL_INT(2, lv_label_get_text_selection_start(obj));
+    TEST_ASSERT_EQUAL_INT(2, lv_obj_get_property(obj, LV_PROPERTY_LABEL_TEXT_SELECTION_START).num);
+
+    prop.id = LV_PROPERTY_LABEL_TEXT_SELECTION_END;
+    prop.num = 5;
+    TEST_ASSERT_TRUE(lv_obj_set_property(obj, &prop) == LV_RESULT_OK);
+    TEST_ASSERT_EQUAL_INT(5, lv_label_get_text_selection_end(obj));
+    TEST_ASSERT_EQUAL_INT(5, lv_obj_get_property(obj, LV_PROPERTY_LABEL_TEXT_SELECTION_END).num);
+#endif
 #endif
 }
 

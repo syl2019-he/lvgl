@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file lv_style.h
  *
  */
@@ -203,6 +203,8 @@ enum {
     LV_STYLE_ALIGN                  = 10,
 
     LV_STYLE_RADIUS                 = 12,
+    LV_STYLE_RADIAL_OFFSET          = 13,
+    LV_STYLE_PAD_RADIAL             = 14,
 
     /*Group 1*/
     LV_STYLE_PAD_TOP                = 16,
@@ -311,6 +313,7 @@ enum {
     LV_STYLE_TRANSFORM_SKEW_Y       = 114,
     LV_STYLE_BITMAP_MASK_SRC        = 115,
     LV_STYLE_ROTARY_SENSITIVITY     = 116,
+    LV_STYLE_TRANSLATE_RADIAL       = 117,
 
     LV_STYLE_FLEX_FLOW              = 125,
     LV_STYLE_FLEX_MAIN_PLACE        = 126,
@@ -582,6 +585,14 @@ static inline void lv_style_set_pad_gap(lv_style_t * style, int32_t value)
 {
     lv_style_set_pad_row(style, value);
     lv_style_set_pad_column(style, value);
+}
+
+static inline void lv_style_set_margin_all(lv_style_t * style, int32_t value)
+{
+    lv_style_set_margin_left(style, value);
+    lv_style_set_margin_right(style, value);
+    lv_style_set_margin_top(style, value);
+    lv_style_set_margin_bottom(style, value);
 }
 
 static inline void lv_style_set_transform_scale(lv_style_t * style, int32_t value)

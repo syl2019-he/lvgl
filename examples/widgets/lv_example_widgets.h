@@ -123,6 +123,8 @@ void lv_example_scale_4(void);
 void lv_example_scale_5(void);
 void lv_example_scale_6(void);
 void lv_example_scale_7(void);
+void lv_example_scale_8(void);
+void lv_example_scale_9(void);
 
 void lv_example_slider_1(void);
 void lv_example_slider_2(void);
@@ -136,6 +138,7 @@ void lv_example_spinbox_1(void);
 void lv_example_spinner_1(void);
 
 void lv_example_switch_1(void);
+void lv_example_switch_2(void);
 
 void lv_example_table_1(void);
 void lv_example_table_2(void);

@@ -60,7 +60,7 @@ struct ffmpeg_context_s {
 
 #pragma pack(1)
 
-struct lv_image_pixel_color_s {
+struct _lv_image_pixel_color_s {
     lv_color_t c;
     uint8_t alpha;
 };
@@ -817,6 +817,9 @@ static void lv_ffmpeg_player_frame_update_cb(lv_timer_t * timer)
 
     if(has_next < 0) {
         lv_ffmpeg_player_set_cmd(obj, player->auto_restart ? LV_FFMPEG_PLAYER_CMD_START : LV_FFMPEG_PLAYER_CMD_STOP);
+        if(!player->auto_restart) {
+            lv_obj_send_event((lv_obj_t *)player, LV_EVENT_READY, NULL);
+        }
         return;
     }
 

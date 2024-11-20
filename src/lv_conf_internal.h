@@ -29,6 +29,9 @@
 #define LV_DRAW_SW_ASM_HELIUM       2
 #define LV_DRAW_SW_ASM_CUSTOM       255
 
+#define LV_NEMA_HAL_CUSTOM          0
+#define LV_NEMA_HAL_STM32           1
+
 /** Handle special Kconfig options. */
 #ifndef LV_KCONFIG_IGNORE
     #include "lv_conf_kconfig.h"
@@ -593,11 +596,23 @@
 #endif
 
 #if LV_USE_NEMA_GFX
-    #ifndef LV_NEMA_GFX_HAL_INCLUDE
-        #ifdef CONFIG_LV_NEMA_GFX_HAL_INCLUDE
-            #define LV_NEMA_GFX_HAL_INCLUDE CONFIG_LV_NEMA_GFX_HAL_INCLUDE
+    /** Select which NemaGFX HAL to use. Possible options:
+     * - LV_NEMA_HAL_CUSTOM
+     * - LV_NEMA_HAL_STM32 */
+    #ifndef LV_USE_NEMA_HAL
+        #ifdef CONFIG_LV_USE_NEMA_HAL
+            #define LV_USE_NEMA_HAL CONFIG_LV_USE_NEMA_HAL
         #else
-            #define LV_NEMA_GFX_HAL_INCLUDE <stm32u5xx_hal.h>
+            #define LV_USE_NEMA_HAL LV_NEMA_HAL_CUSTOM
+        #endif
+    #endif
+    #if LV_USE_NEMA_HAL == LV_NEMA_HAL_STM32
+        #ifndef LV_NEMA_STM32_HAL_INCLUDE
+            #ifdef CONFIG_LV_NEMA_STM32_HAL_INCLUDE
+                #define LV_NEMA_STM32_HAL_INCLUDE CONFIG_LV_NEMA_STM32_HAL_INCLUDE
+            #else
+                #define LV_NEMA_STM32_HAL_INCLUDE <stm32u5xx_hal.h>
+            #endif
         #endif
     #endif
 
@@ -609,7 +624,6 @@
             #define LV_USE_NEMA_VG 0
         #endif
     #endif
-
     #if LV_USE_NEMA_VG
         /*Define application's resolution used for VG related buffer allocation */
         #ifndef LV_NEMA_GFX_MAX_RESX
@@ -1350,6 +1364,16 @@
         #else
             #define LV_VG_LITE_THORVG_THREAD_RENDER 0
         #endif
+    #endif
+#endif
+
+/* Enable the multi-touch gesture recognition feature */
+/* Gesture recognition requires the use of floats */
+#ifndef LV_USE_GESTURE_RECOGNITION
+    #ifdef CONFIG_LV_USE_GESTURE_RECOGNITION
+        #define LV_USE_GESTURE_RECOGNITION CONFIG_LV_USE_GESTURE_RECOGNITION
+    #else
+        #define LV_USE_GESTURE_RECOGNITION 0
     #endif
 #endif
 
@@ -2606,6 +2630,13 @@
             #define LV_FS_FATFS_LETTER '\0'     /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
         #endif
     #endif
+    #ifndef LV_FS_FATFS_PATH
+        #ifdef CONFIG_LV_FS_FATFS_PATH
+            #define LV_FS_FATFS_PATH CONFIG_LV_FS_FATFS_PATH
+        #else
+            #define LV_FS_FATFS_PATH ""         /**< Set the working directory. File/directory paths will be appended to it. */
+        #endif
+    #endif
     #ifndef LV_FS_FATFS_CACHE_SIZE
         #ifdef CONFIG_LV_FS_FATFS_CACHE_SIZE
             #define LV_FS_FATFS_CACHE_SIZE CONFIG_LV_FS_FATFS_CACHE_SIZE
@@ -2649,6 +2680,13 @@
             #define LV_FS_LITTLEFS_LETTER '\0'  /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
         #endif
     #endif
+    #ifndef LV_FS_LITTLEFS_PATH
+        #ifdef CONFIG_LV_FS_LITTLEFS_PATH
+            #define LV_FS_LITTLEFS_PATH CONFIG_LV_FS_LITTLEFS_PATH
+        #else
+            #define LV_FS_LITTLEFS_PATH ""         /**< Set the working directory. File/directory paths will be appended to it. */
+        #endif
+    #endif
 #endif
 
 /** API for Arduino LittleFs. */
@@ -2667,6 +2705,13 @@
             #define LV_FS_ARDUINO_ESP_LITTLEFS_LETTER '\0'     /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
         #endif
     #endif
+    #ifndef LV_FS_ARDUINO_ESP_LITTLEFS_PATH
+        #ifdef CONFIG_LV_FS_ARDUINO_ESP_LITTLEFS_PATH
+            #define LV_FS_ARDUINO_ESP_LITTLEFS_PATH CONFIG_LV_FS_ARDUINO_ESP_LITTLEFS_PATH
+        #else
+            #define LV_FS_ARDUINO_ESP_LITTLEFS_PATH ""         /**< Set the working directory. File/directory paths will be appended to it. */
+        #endif
+    #endif
 #endif
 
 /** API for Arduino Sd. */
@@ -2683,6 +2728,13 @@
             #define LV_FS_ARDUINO_SD_LETTER CONFIG_LV_FS_ARDUINO_SD_LETTER
         #else
             #define LV_FS_ARDUINO_SD_LETTER '\0'          /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
+        #endif
+    #endif
+    #ifndef LV_FS_ARDUINO_SD_PATH
+        #ifdef CONFIG_LV_FS_ARDUINO_SD_PATH
+            #define LV_FS_ARDUINO_SD_PATH CONFIG_LV_FS_ARDUINO_SD_PATH
+        #else
+            #define LV_FS_ARDUINO_SD_PATH ""         /**< Set the working directory. File/directory paths will be appended to it. */
         #endif
     #endif
 #endif

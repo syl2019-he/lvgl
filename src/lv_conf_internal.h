@@ -284,22 +284,22 @@
     #endif
 #endif
 #if LV_USE_OS == LV_OS_FREERTOS
-	/*
-	 * Unblocking an RTOS task with a direct notification is 45% faster and uses less RAM
-	 * than unblocking a task using an intermediary object such as a binary semaphore.
-	 * RTOS task notifications can only be used when there is only one task that can be the recipient of the event.
-	 */
-	#ifndef LV_USE_FREERTOS_TASK_NOTIFY
-	    #ifdef LV_KCONFIG_PRESENT
-	        #ifdef CONFIG_LV_USE_FREERTOS_TASK_NOTIFY
-	            #define LV_USE_FREERTOS_TASK_NOTIFY CONFIG_LV_USE_FREERTOS_TASK_NOTIFY
-	        #else
-	            #define LV_USE_FREERTOS_TASK_NOTIFY 0
-	        #endif
-	    #else
-	        #define LV_USE_FREERTOS_TASK_NOTIFY 1
-	    #endif
-	#endif
+    /*
+     * Unblocking an RTOS task with a direct notification is 45% faster and uses less RAM
+     * than unblocking a task using an intermediary object such as a binary semaphore.
+     * RTOS task notifications can only be used when there is only one task that can be the recipient of the event.
+     */
+    #ifndef LV_USE_FREERTOS_TASK_NOTIFY
+        #ifdef LV_KCONFIG_PRESENT
+            #ifdef CONFIG_LV_USE_FREERTOS_TASK_NOTIFY
+                #define LV_USE_FREERTOS_TASK_NOTIFY CONFIG_LV_USE_FREERTOS_TASK_NOTIFY
+            #else
+                #define LV_USE_FREERTOS_TASK_NOTIFY 0
+            #endif
+        #else
+            #define LV_USE_FREERTOS_TASK_NOTIFY 1
+        #endif
+    #endif
 #endif
 
 /*========================
@@ -495,6 +495,16 @@
         #endif
     #endif
 
+    /* The threshold of the luminance to consider a pixel as
+     * active in indexed color format */
+    #ifndef LV_DRAW_SW_I1_LUM_THRESHOLD
+        #ifdef CONFIG_LV_DRAW_SW_I1_LUM_THRESHOLD
+            #define LV_DRAW_SW_I1_LUM_THRESHOLD CONFIG_LV_DRAW_SW_I1_LUM_THRESHOLD
+        #else
+            #define LV_DRAW_SW_I1_LUM_THRESHOLD 127
+        #endif
+    #endif
+
     /** Set number of draw units.
      *  - > 1 requires operating system to be enabled in `LV_USE_OS`.
      *  - > 1 means multiple threads will render the screen in parallel. */
@@ -594,6 +604,7 @@
             #define LV_USE_DRAW_SW_COMPLEX_GRADIENTS    0
         #endif
     #endif
+
 #endif
 
 /*Use TSi's aka (Think Silicon) NemaGFX */
@@ -765,6 +776,51 @@
             #define LV_USE_PXP_ASSERT CONFIG_LV_USE_PXP_ASSERT
         #else
             #define LV_USE_PXP_ASSERT 0
+        #endif
+    #endif
+#endif
+
+/** Use NXP's G2D on MPU platforms. */
+#ifndef LV_USE_DRAW_G2D
+    #ifdef CONFIG_LV_USE_DRAW_G2D
+        #define LV_USE_DRAW_G2D CONFIG_LV_USE_DRAW_G2D
+    #else
+        #define LV_USE_DRAW_G2D 0
+    #endif
+#endif
+
+#if LV_USE_DRAW_G2D
+    /** Maximum number of buffers that can be stored for G2D draw unit.
+     *  Includes the frame buffers and assets. */
+    #ifndef LV_G2D_HASH_TABLE_SIZE
+        #ifdef CONFIG_LV_G2D_HASH_TABLE_SIZE
+            #define LV_G2D_HASH_TABLE_SIZE CONFIG_LV_G2D_HASH_TABLE_SIZE
+        #else
+            #define LV_G2D_HASH_TABLE_SIZE 50
+        #endif
+    #endif
+
+    #if LV_USE_OS
+        /** Use additional draw thread for G2D processing.*/
+        #ifndef LV_USE_G2D_DRAW_THREAD
+            #ifdef LV_KCONFIG_PRESENT
+                #ifdef CONFIG_LV_USE_G2D_DRAW_THREAD
+                    #define LV_USE_G2D_DRAW_THREAD CONFIG_LV_USE_G2D_DRAW_THREAD
+                #else
+                    #define LV_USE_G2D_DRAW_THREAD 0
+                #endif
+            #else
+                #define LV_USE_G2D_DRAW_THREAD 1
+            #endif
+        #endif
+    #endif
+
+    /** Enable G2D asserts. */
+    #ifndef LV_USE_G2D_ASSERT
+        #ifdef CONFIG_LV_USE_G2D_ASSERT
+            #define LV_USE_G2D_ASSERT CONFIG_LV_USE_G2D_ASSERT
+        #else
+            #define LV_USE_G2D_ASSERT 0
         #endif
     #endif
 #endif
@@ -1258,6 +1314,15 @@
     #endif
 #endif
 
+/**  Enable support widget names*/
+#ifndef LV_USE_OBJ_NAME
+    #ifdef CONFIG_LV_USE_OBJ_NAME
+        #define LV_USE_OBJ_NAME CONFIG_LV_USE_OBJ_NAME
+    #else
+        #define LV_USE_OBJ_NAME         0
+    #endif
+#endif
+
 /** Automatically assign an ID when obj is created */
 #ifndef LV_OBJ_ID_AUTO_ASSIGN
     #ifdef CONFIG_LV_OBJ_ID_AUTO_ASSIGN
@@ -1521,7 +1586,7 @@
     #ifdef CONFIG_LV_USE_PRIVATE_API
         #define LV_USE_PRIVATE_API CONFIG_LV_USE_PRIVATE_API
     #else
-        #define LV_USE_PRIVATE_API		0
+        #define LV_USE_PRIVATE_API      0
     #endif
 #endif
 
@@ -1891,7 +1956,7 @@
 /*==================
  * WIDGETS
  *================*/
-/* Documentation for widgets can be found here: https://docs.lvgl.io/latest/en/html/widgets/index.html . */
+/* Documentation for widgets can be found here: https://docs.lvgl.io/master/details/widgets/index.html . */
 
 /** 1: Causes these widgets to be given default values at creation time.
  *  - lv_buttonmatrix_t:  Get default maps:  {"Btn1", "Btn2", "Btn3", "\n", "Btn4", "Btn5", ""}, else map not set.
@@ -2408,7 +2473,7 @@
 /*==================
  * THEMES
  *==================*/
-/* Documentation for themes can be found here: https://docs.lvgl.io/master/overview/style.html#themes . */
+/* Documentation for themes can be found here: https://docs.lvgl.io/master/details/common-widget-features/styles/style.html#themes . */
 
 /** A simple, impressive and very complete theme */
 #ifndef LV_USE_THEME_DEFAULT
@@ -2484,7 +2549,7 @@
 /*==================
  * LAYOUTS
  *==================*/
-/* Documentation for layouts can be found here: https://docs.lvgl.io/master/layouts/index.html . */
+/* Documentation for layouts can be found here: https://docs.lvgl.io/master/details/common-widget-features/layouts/index.html . */
 
 /** A layout similar to Flexbox in CSS. */
 #ifndef LV_USE_FLEX
@@ -2515,16 +2580,18 @@
 /*====================
  * 3RD PARTS LIBRARIES
  *====================*/
-/* Documentation for libraries can be found here: https://docs.lvgl.io/master/libs/index.html . */
+/* Documentation for libraries can be found here: https://docs.lvgl.io/master/details/libs/index.html . */
 
 /* File system interfaces for common APIs */
 
-/** Setting a default driver letter allows skipping the driver prefix in filepaths. */
-#ifndef LV_FS_DEFAULT_DRIVE_LETTER
-    #ifdef CONFIG_LV_FS_DEFAULT_DRIVE_LETTER
-        #define LV_FS_DEFAULT_DRIVE_LETTER CONFIG_LV_FS_DEFAULT_DRIVE_LETTER
+/** Setting a default driver letter allows skipping the driver prefix in filepaths.
+ *  Documentation about how to use the below driver-identifier letters can be found at
+ *  https://docs.lvgl.io/master/details/main-modules/fs.html#lv-fs-identifier-letters . */
+#ifndef LV_FS_DEFAULT_DRIVER_LETTER
+    #ifdef CONFIG_LV_FS_DEFAULT_DRIVER_LETTER
+        #define LV_FS_DEFAULT_DRIVER_LETTER CONFIG_LV_FS_DEFAULT_DRIVER_LETTER
     #else
-        #define LV_FS_DEFAULT_DRIVE_LETTER '\0'
+        #define LV_FS_DEFAULT_DRIVER_LETTER '\0'
     #endif
 #endif
 
@@ -2541,7 +2608,7 @@
         #ifdef CONFIG_LV_FS_STDIO_LETTER
             #define LV_FS_STDIO_LETTER CONFIG_LV_FS_STDIO_LETTER
         #else
-            #define LV_FS_STDIO_LETTER '\0'     /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
+            #define LV_FS_STDIO_LETTER '\0'     /**< Set an upper-case driver-identifier letter for this driver (e.g. 'A'). */
         #endif
     #endif
     #ifndef LV_FS_STDIO_PATH
@@ -2573,7 +2640,7 @@
         #ifdef CONFIG_LV_FS_POSIX_LETTER
             #define LV_FS_POSIX_LETTER CONFIG_LV_FS_POSIX_LETTER
         #else
-            #define LV_FS_POSIX_LETTER '\0'     /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
+            #define LV_FS_POSIX_LETTER '\0'     /**< Set an upper-case driver-identifier letter for this driver (e.g. 'A'). */
         #endif
     #endif
     #ifndef LV_FS_POSIX_PATH
@@ -2605,7 +2672,7 @@
         #ifdef CONFIG_LV_FS_WIN32_LETTER
             #define LV_FS_WIN32_LETTER CONFIG_LV_FS_WIN32_LETTER
         #else
-            #define LV_FS_WIN32_LETTER '\0'     /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
+            #define LV_FS_WIN32_LETTER '\0'     /**< Set an upper-case driver-identifier letter for this driver (e.g. 'A'). */
         #endif
     #endif
     #ifndef LV_FS_WIN32_PATH
@@ -2637,7 +2704,7 @@
         #ifdef CONFIG_LV_FS_FATFS_LETTER
             #define LV_FS_FATFS_LETTER CONFIG_LV_FS_FATFS_LETTER
         #else
-            #define LV_FS_FATFS_LETTER '\0'     /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
+            #define LV_FS_FATFS_LETTER '\0'     /**< Set an upper-case driver-identifier letter for this driver (e.g. 'A'). */
         #endif
     #endif
     #ifndef LV_FS_FATFS_PATH
@@ -2669,7 +2736,7 @@
         #ifdef CONFIG_LV_FS_MEMFS_LETTER
             #define LV_FS_MEMFS_LETTER CONFIG_LV_FS_MEMFS_LETTER
         #else
-            #define LV_FS_MEMFS_LETTER '\0'     /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
+            #define LV_FS_MEMFS_LETTER '\0'     /**< Set an upper-case driver-identifier letter for this driver (e.g. 'A'). */
         #endif
     #endif
 #endif
@@ -2687,14 +2754,14 @@
         #ifdef CONFIG_LV_FS_LITTLEFS_LETTER
             #define LV_FS_LITTLEFS_LETTER CONFIG_LV_FS_LITTLEFS_LETTER
         #else
-            #define LV_FS_LITTLEFS_LETTER '\0'  /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
+            #define LV_FS_LITTLEFS_LETTER '\0'  /**< Set an upper-case driver-identifier letter for this driver (e.g. 'A'). */
         #endif
     #endif
     #ifndef LV_FS_LITTLEFS_PATH
         #ifdef CONFIG_LV_FS_LITTLEFS_PATH
             #define LV_FS_LITTLEFS_PATH CONFIG_LV_FS_LITTLEFS_PATH
         #else
-            #define LV_FS_LITTLEFS_PATH ""         /**< Set the working directory. File/directory paths will be appended to it. */
+            #define LV_FS_LITTLEFS_PATH ""      /**< Set the working directory. File/directory paths will be appended to it. */
         #endif
     #endif
 #endif
@@ -2712,14 +2779,14 @@
         #ifdef CONFIG_LV_FS_ARDUINO_ESP_LITTLEFS_LETTER
             #define LV_FS_ARDUINO_ESP_LITTLEFS_LETTER CONFIG_LV_FS_ARDUINO_ESP_LITTLEFS_LETTER
         #else
-            #define LV_FS_ARDUINO_ESP_LITTLEFS_LETTER '\0'     /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
+            #define LV_FS_ARDUINO_ESP_LITTLEFS_LETTER '\0'  /**< Set an upper-case driver-identifier letter for this driver (e.g. 'A'). */
         #endif
     #endif
     #ifndef LV_FS_ARDUINO_ESP_LITTLEFS_PATH
         #ifdef CONFIG_LV_FS_ARDUINO_ESP_LITTLEFS_PATH
             #define LV_FS_ARDUINO_ESP_LITTLEFS_PATH CONFIG_LV_FS_ARDUINO_ESP_LITTLEFS_PATH
         #else
-            #define LV_FS_ARDUINO_ESP_LITTLEFS_PATH ""         /**< Set the working directory. File/directory paths will be appended to it. */
+            #define LV_FS_ARDUINO_ESP_LITTLEFS_PATH ""      /**< Set the working directory. File/directory paths will be appended to it. */
         #endif
     #endif
 #endif
@@ -2737,14 +2804,32 @@
         #ifdef CONFIG_LV_FS_ARDUINO_SD_LETTER
             #define LV_FS_ARDUINO_SD_LETTER CONFIG_LV_FS_ARDUINO_SD_LETTER
         #else
-            #define LV_FS_ARDUINO_SD_LETTER '\0'          /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
+            #define LV_FS_ARDUINO_SD_LETTER '\0'  /**< Set an upper-case driver-identifier letter for this driver (e.g. 'A'). */
         #endif
     #endif
     #ifndef LV_FS_ARDUINO_SD_PATH
         #ifdef CONFIG_LV_FS_ARDUINO_SD_PATH
             #define LV_FS_ARDUINO_SD_PATH CONFIG_LV_FS_ARDUINO_SD_PATH
         #else
-            #define LV_FS_ARDUINO_SD_PATH ""         /**< Set the working directory. File/directory paths will be appended to it. */
+            #define LV_FS_ARDUINO_SD_PATH ""      /**< Set the working directory. File/directory paths will be appended to it. */
+        #endif
+    #endif
+#endif
+
+/** API for UEFI */
+#ifndef LV_USE_FS_UEFI
+    #ifdef CONFIG_LV_USE_FS_UEFI
+        #define LV_USE_FS_UEFI CONFIG_LV_USE_FS_UEFI
+    #else
+        #define LV_USE_FS_UEFI 0
+    #endif
+#endif
+#if LV_USE_FS_UEFI
+    #ifndef LV_FS_UEFI_LETTER
+        #ifdef CONFIG_LV_FS_UEFI_LETTER
+            #define LV_FS_UEFI_LETTER CONFIG_LV_FS_UEFI_LETTER
+        #else
+            #define LV_FS_UEFI_LETTER '\0'      /**< Set an upper-case driver-identifier letter for this driver (e.g. 'A'). */
         #endif
     #endif
 #endif
@@ -3004,7 +3089,7 @@
             #define LV_FFMPEG_DUMP_FORMAT 0
         #endif
     #endif
-    /** Use lvgl file path in FFmpeg Player widget 
+    /** Use lvgl file path in FFmpeg Player widget
      *  You won't be able to open URLs after enabling this feature.
      *  Note that FFmpeg image decoder will always use lvgl file system. */
     #ifndef LV_FFMPEG_PLAYER_USE_LV_FS
@@ -3019,7 +3104,7 @@
 /*==================
  * OTHERS
  *==================*/
-/* Documentation for several of the below items can be found here: https://docs.lvgl.io/master/others/index.html . */
+/* Documentation for several of the below items can be found here: https://docs.lvgl.io/master/details/auxiliary-modules/index.html . */
 
 /** 1: Enable API to take snapshot for object */
 #ifndef LV_USE_SNAPSHOT
@@ -3044,7 +3129,7 @@
         #ifdef CONFIG_LV_SYSMON_GET_IDLE
             #define LV_SYSMON_GET_IDLE CONFIG_LV_SYSMON_GET_IDLE
         #else
-            #define LV_SYSMON_GET_IDLE lv_timer_get_idle
+            #define LV_SYSMON_GET_IDLE lv_os_get_idle_percent
         #endif
     #endif
 
@@ -3474,15 +3559,44 @@
 
 #endif
 
+/** Enable emulated input devices, time emulation, and screenshot compares. */
+#ifndef LV_USE_TEST
+    #ifdef CONFIG_LV_USE_TEST
+        #define LV_USE_TEST CONFIG_LV_USE_TEST
+    #else
+        #define LV_USE_TEST 0
+    #endif
+#endif
+#if LV_USE_TEST
+
+/** Enable `lv_test_screenshot_compare`.
+ * Requires libpng and a few MB of extra RAM. */
+#ifndef LV_USE_TEST_SCREENSHOT_COMPARE
+    #ifdef CONFIG_LV_USE_TEST_SCREENSHOT_COMPARE
+        #define LV_USE_TEST_SCREENSHOT_COMPARE CONFIG_LV_USE_TEST_SCREENSHOT_COMPARE
+    #else
+        #define LV_USE_TEST_SCREENSHOT_COMPARE 0
+    #endif
+#endif
+#endif /*LV_USE_TEST*/
+
 /** Enable loading XML UIs runtime */
 #ifndef LV_USE_XML
     #ifdef CONFIG_LV_USE_XML
         #define LV_USE_XML CONFIG_LV_USE_XML
     #else
-        #define LV_USE_XML	0
+        #define LV_USE_XML    0
     #endif
 #endif
 
+/*1: Enable color filter style*/
+#ifndef LV_USE_COLOR_FILTER
+    #ifdef CONFIG_LV_USE_COLOR_FILTER
+        #define LV_USE_COLOR_FILTER CONFIG_LV_USE_COLOR_FILTER
+    #else
+        #define LV_USE_COLOR_FILTER     0
+    #endif
+#endif
 /*==================
  * DEVICES
  *==================*/
@@ -3700,6 +3814,15 @@
         #endif
     #endif
 
+    /** Use independent image heap for default draw buffer */
+    #ifndef LV_NUTTX_DEFAULT_DRAW_BUF_USE_INDEPENDENT_IMAGE_HEAP
+        #ifdef CONFIG_LV_NUTTX_DEFAULT_DRAW_BUF_USE_INDEPENDENT_IMAGE_HEAP
+            #define LV_NUTTX_DEFAULT_DRAW_BUF_USE_INDEPENDENT_IMAGE_HEAP CONFIG_LV_NUTTX_DEFAULT_DRAW_BUF_USE_INDEPENDENT_IMAGE_HEAP
+        #else
+            #define LV_NUTTX_DEFAULT_DRAW_BUF_USE_INDEPENDENT_IMAGE_HEAP    0
+        #endif
+    #endif
+
     #ifndef LV_USE_NUTTX_LIBUV
         #ifdef CONFIG_LV_USE_NUTTX_LIBUV
             #define LV_USE_NUTTX_LIBUV CONFIG_LV_USE_NUTTX_LIBUV
@@ -3767,6 +3890,21 @@
         #define LV_USE_LINUX_DRM CONFIG_LV_USE_LINUX_DRM
     #else
         #define LV_USE_LINUX_DRM        0
+    #endif
+#endif
+
+#if LV_USE_LINUX_DRM
+
+    /* Use the MESA GBM library to allocate DMA buffers that can be
+     * shared across sub-systems and libraries using the Linux DMA-BUF API.
+     * The GBM library aims to provide a platform independent memory management system
+     * it supports the major GPU vendors - This option requires linking with libgbm */
+    #ifndef LV_LINUX_DRM_GBM_BUFFERS
+        #ifdef CONFIG_LV_LINUX_DRM_GBM_BUFFERS
+            #define LV_LINUX_DRM_GBM_BUFFERS CONFIG_LV_LINUX_DRM_GBM_BUFFERS
+        #else
+            #define LV_LINUX_DRM_GBM_BUFFERS 0
+        #endif
     #endif
 #endif
 
@@ -3898,6 +4036,31 @@
         #define LV_USE_WINDOWS CONFIG_LV_USE_WINDOWS
     #else
         #define LV_USE_WINDOWS    0
+    #endif
+#endif
+
+/** LVGL UEFI backend */
+#ifndef LV_USE_UEFI
+    #ifdef CONFIG_LV_USE_UEFI
+        #define LV_USE_UEFI CONFIG_LV_USE_UEFI
+    #else
+        #define LV_USE_UEFI 0
+    #endif
+#endif
+#if LV_USE_UEFI
+    #ifndef LV_USE_UEFI_INCLUDE
+        #ifdef CONFIG_LV_USE_UEFI_INCLUDE
+            #define LV_USE_UEFI_INCLUDE CONFIG_LV_USE_UEFI_INCLUDE
+        #else
+            #define LV_USE_UEFI_INCLUDE "myefi.h"   /**< Header that hides the actual framework (EDK2, gnu-efi, ...) */
+        #endif
+    #endif
+    #ifndef LV_UEFI_USE_MEMORY_SERVICES
+        #ifdef CONFIG_LV_UEFI_USE_MEMORY_SERVICES
+            #define LV_UEFI_USE_MEMORY_SERVICES CONFIG_LV_UEFI_USE_MEMORY_SERVICES
+        #else
+            #define LV_UEFI_USE_MEMORY_SERVICES 0   /**< Use the memory functions from the boot services table */
+        #endif
     #endif
 #endif
 
@@ -4108,17 +4271,35 @@
     #ifdef CONFIG_LV_USE_DEMO_EBIKE
         #define LV_USE_DEMO_EBIKE CONFIG_LV_USE_DEMO_EBIKE
     #else
-        #define LV_USE_DEMO_EBIKE			0
+        #define LV_USE_DEMO_EBIKE           0
     #endif
 #endif
 #if LV_USE_DEMO_EBIKE
-	#ifndef LV_DEMO_EBIKE_PORTRAIT
-	    #ifdef CONFIG_LV_DEMO_EBIKE_PORTRAIT
-	        #define LV_DEMO_EBIKE_PORTRAIT CONFIG_LV_DEMO_EBIKE_PORTRAIT
-	    #else
-	        #define LV_DEMO_EBIKE_PORTRAIT  0    /*0: for 480x270..480x320, 1: for 480x800..720x1280*/
-	    #endif
-	#endif
+    #ifndef LV_DEMO_EBIKE_PORTRAIT
+        #ifdef CONFIG_LV_DEMO_EBIKE_PORTRAIT
+            #define LV_DEMO_EBIKE_PORTRAIT CONFIG_LV_DEMO_EBIKE_PORTRAIT
+        #else
+            #define LV_DEMO_EBIKE_PORTRAIT  0    /*0: for 480x270..480x320, 1: for 480x800..720x1280*/
+        #endif
+    #endif
+#endif
+
+/** High-resolution demo */
+#ifndef LV_USE_DEMO_HIGH_RES
+    #ifdef CONFIG_LV_USE_DEMO_HIGH_RES
+        #define LV_USE_DEMO_HIGH_RES CONFIG_LV_USE_DEMO_HIGH_RES
+    #else
+        #define LV_USE_DEMO_HIGH_RES        0
+    #endif
+#endif
+
+/* Smart watch demo */
+#ifndef LV_USE_DEMO_SMARTWATCH
+    #ifdef CONFIG_LV_USE_DEMO_SMARTWATCH
+        #define LV_USE_DEMO_SMARTWATCH CONFIG_LV_USE_DEMO_SMARTWATCH
+    #else
+        #define LV_USE_DEMO_SMARTWATCH      0
+    #endif
 #endif
 
 
@@ -4126,6 +4307,9 @@
 /*----------------------------------
  * End of parsing lv_conf_template.h
  -----------------------------------*/
+
+/*Fix inconsistent name*/
+#define LV_USE_ANIMIMAGE LV_USE_ANIMIMG
 
 #ifndef __ASSEMBLY__
 LV_EXPORT_CONST_INT(LV_DPI_DEF);

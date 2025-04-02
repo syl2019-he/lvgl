@@ -70,6 +70,8 @@
 #define LV_USE_FS_MEMFS     1
 #define LV_FS_MEMFS_LETTER  'M'
 
+#define LV_FS_DEFAULT_DRIVER_LETTER 'A'
+
 #define LV_USE_MONKEY       1
 #define LV_USE_RLE          1
 #define LV_USE_LODEPNG      1
@@ -88,6 +90,7 @@
 #define LV_USE_OBSERVER         1
 #define LV_USE_FILE_EXPLORER    1
 #define LV_USE_TINY_TTF         1
+#define LV_TINY_TTF_FILE_SUPPORT 1
 #define LV_USE_SYSMON           1
 #define LV_USE_MEM_MONITOR      1
 #define LV_USE_PERF_MONITOR     1
@@ -102,6 +105,8 @@
 #define LV_PROFILER_INCLUDE     "lv_profiler_builtin.h"
 #define LV_USE_GRIDNAV          1
 #define LV_USE_XML              1
+#define LV_USE_TEST             1
+#define LV_USE_TEST_SCREENSHOT_COMPARE  1
 
 #define LV_BUILD_EXAMPLES       1
 #define LV_USE_DEMO_WIDGETS     1
@@ -116,10 +121,14 @@
 #define LV_USE_DEMO_SCROLL      1
 #define LV_USE_DEMO_EBIKE       1
 #define LV_USE_DEMO_VECTOR_GRAPHIC  1
+#define LV_USE_DEMO_HIGH_RES    1
+#define LV_USE_DEMO_SMARTWATCH      1
 
 #define LV_USE_OBJ_ID           1
 #define LV_OBJ_ID_AUTO_ASSIGN    1
 #define LV_USE_OBJ_ID_BUILTIN   1
+
+#define LV_USE_OBJ_NAME         1
 
 #define LV_CACHE_DEF_SIZE       (10 * 1024 * 1024)
 
@@ -157,7 +166,7 @@
 
 #define LV_USE_FREETYPE 1
 #define LV_FREETYPE_USE_LVGL_PORT 0
-#define LV_FREETYPE_CACHE_FT_GLYPH_CNT 10
+#define LV_FREETYPE_CACHE_FT_GLYPH_CNT 64
 
 #define LV_USE_FONT_MANAGER 1
 

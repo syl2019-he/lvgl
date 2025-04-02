@@ -360,17 +360,17 @@ static void chart_draw_task_event_cb(lv_event_t * e)
     tri_dsc.p[1].y = draw_line_dsc->p2.y;
     tri_dsc.p[2].x = draw_line_dsc->p1.y < draw_line_dsc->p2.y ? draw_line_dsc->p1.x : draw_line_dsc->p2.x;
     tri_dsc.p[2].y = LV_MAX(draw_line_dsc->p1.y, draw_line_dsc->p2.y);
-    tri_dsc.bg_grad.dir = LV_GRAD_DIR_VER;
+    tri_dsc.grad.dir = LV_GRAD_DIR_VER;
 
     int32_t full_h = lv_obj_get_height(obj);
     int32_t fract_upper = (int32_t)(LV_MIN(draw_line_dsc->p1.y, draw_line_dsc->p2.y) - obj->coords.y1) * 255 / full_h;
     int32_t fract_lower = (int32_t)(LV_MAX(draw_line_dsc->p1.y, draw_line_dsc->p2.y) - obj->coords.y1) * 255 / full_h;
-    tri_dsc.bg_grad.stops[0].color = lv_color_hex(0x3987CF);
-    tri_dsc.bg_grad.stops[0].opa = 200 * (255 - fract_upper) / 256;
-    tri_dsc.bg_grad.stops[0].frac = 0;
-    tri_dsc.bg_grad.stops[1].color = lv_color_hex(0x3987CF);
-    tri_dsc.bg_grad.stops[1].opa = 200 * (255 - fract_lower) / 256;
-    tri_dsc.bg_grad.stops[1].frac = 255;
+    tri_dsc.grad.stops[0].color = lv_color_hex(0x3987CF);
+    tri_dsc.grad.stops[0].opa = 200 * (255 - fract_upper) / 256;
+    tri_dsc.grad.stops[0].frac = 0;
+    tri_dsc.grad.stops[1].color = lv_color_hex(0x3987CF);
+    tri_dsc.grad.stops[1].opa = 200 * (255 - fract_lower) / 256;
+    tri_dsc.grad.stops[1].frac = 255;
 
     lv_draw_triangle(base_dsc->layer, &tri_dsc);
 
@@ -435,16 +435,16 @@ static void chart_mode_observer_cb(lv_observer_t * observer, lv_subject_t * subj
 
     switch(lv_subject_get_int(&subject_mode)) {
         case MODE_AVG_SPEED:
-            lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, 0, 30);
-            lv_chart_set_ext_y_array(chart, ser, avg_speed_values);
+            lv_chart_set_axis_range(chart, LV_CHART_AXIS_PRIMARY_Y, 0, 30);
+            lv_chart_set_series_ext_y_array(chart, ser, avg_speed_values);
             break;
         case MODE_TOP_SPEED:
-            lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, 0, 50);
-            lv_chart_set_ext_y_array(chart, ser, top_speed_values);
+            lv_chart_set_axis_range(chart, LV_CHART_AXIS_PRIMARY_Y, 0, 50);
+            lv_chart_set_series_ext_y_array(chart, ser, top_speed_values);
             break;
         case MODE_DISTANCE:
-            lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, 0, 90);
-            lv_chart_set_ext_y_array(chart, ser, distance_values);
+            lv_chart_set_axis_range(chart, LV_CHART_AXIS_PRIMARY_Y, 0, 90);
+            lv_chart_set_series_ext_y_array(chart, ser, distance_values);
             break;
         default:
             break;

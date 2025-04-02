@@ -15,12 +15,12 @@ extern "C" {
  *********************/
 
 #include "lv_freetype.h"
-#include "../../misc/cache/lv_cache.h"
-#include "../../misc/lv_ll.h"
-#include "../../font/lv_font.h"
 
 #if LV_USE_FREETYPE
 
+#include "../../misc/cache/lv_cache.h"
+#include "../../misc/lv_ll.h"
+#include "../../font/lv_font.h"
 #include "ft2build.h"
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
@@ -28,6 +28,7 @@ extern "C" {
 #include FT_SIZES_H
 #include FT_IMAGE_H
 #include FT_OUTLINE_H
+#include FT_STROKER_H
 
 /*********************
  *      DEFINES
@@ -119,6 +120,7 @@ typedef struct _lv_freetype_font_dsc_t {
     lv_freetype_cache_node_t * cache_node;
     lv_cache_entry_t * cache_node_entry;
     FTC_FaceID face_id;
+    uint32_t outline_stroke_width;
 } lv_freetype_font_dsc_t;
 
 /**********************

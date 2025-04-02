@@ -43,6 +43,19 @@ typedef enum {
 
 LV_ATTRIBUTE_EXTERN_DATA extern const lv_obj_class_t lv_slider_class;
 
+#if LV_USE_OBJ_PROPERTY
+enum {
+    LV_PROPERTY_ID2(SLIDER, VALUE,          LV_PROPERTY_TYPE_INT,   LV_PROPERTY_TYPE_BOOL,  0),
+    LV_PROPERTY_ID2(SLIDER, LEFT_VALUE,     LV_PROPERTY_TYPE_INT,   LV_PROPERTY_TYPE_BOOL,  1),
+    LV_PROPERTY_ID2(SLIDER, RANGE,          LV_PROPERTY_TYPE_INT,   LV_PROPERTY_TYPE_INT,   2),
+    LV_PROPERTY_ID(SLIDER, MIN_VALUE,       LV_PROPERTY_TYPE_INT,       4),
+    LV_PROPERTY_ID(SLIDER, MAX_VALUE,       LV_PROPERTY_TYPE_INT,       5),
+    LV_PROPERTY_ID(SLIDER, MODE,            LV_PROPERTY_TYPE_INT,       6),
+    LV_PROPERTY_ID(SLIDER, IS_DRAGGED,      LV_PROPERTY_TYPE_BOOL,      7),
+    LV_PROPERTY_ID(SLIDER, IS_SYMMETRICAL,  LV_PROPERTY_TYPE_BOOL,      8),
+    LV_PROPERTY_SLIDER_END,
+};
+#endif
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
@@ -72,7 +85,7 @@ void lv_slider_set_value(lv_obj_t * obj, int32_t value, lv_anim_enable_t anim);
  * @param value     new value
  * @param anim      LV_ANIM_ON: set the value with an animation; LV_ANIM_OFF: change the value immediately
  */
-void lv_slider_set_left_value(lv_obj_t * obj, int32_t value, lv_anim_enable_t anim);
+void lv_slider_set_start_value(lv_obj_t * obj, int32_t value, lv_anim_enable_t anim);
 
 /**
  * Set minimum and the maximum values of a bar

@@ -578,6 +578,8 @@ vg_lite_buffer_format_t lv_vg_lite_vg_fmt(lv_color_format_t cf)
 
         case LV_COLOR_FORMAT_ARGB8888:
             return VG_LITE_BGRA8888;
+        case LV_COLOR_FORMAT_ARGB8888_PREMULTIPLIED:
+            return VG_sBGRA_8888_PRE;
 
         case LV_COLOR_FORMAT_XRGB8888:
             return VG_LITE_BGRX8888;
@@ -640,6 +642,7 @@ void lv_vg_lite_buffer_format_bytes(
         case VG_LITE_BGRX8888:
         case VG_LITE_XBGR8888:
         case VG_LITE_XRGB8888:
+        case VG_sBGRA_8888_PRE:
             *mul = 4;
             break;
         case VG_LITE_NV12:
@@ -1326,10 +1329,10 @@ void lv_vg_lite_flush(struct _lv_draw_vg_lite_unit_t * u)
 
     LV_VG_LITE_CHECK_ERROR(vg_lite_flush(), {});
 
-    /* Rremove all old caches reference and swap new caches reference */
-    if(u->grad_pending) {
-        lv_vg_lite_pending_swap(u->grad_pending);
-    }
+    /* Remove all old caches reference and swap new caches reference */
+#if LV_USE_VECTOR_GRAPHIC
+    lv_vg_lite_pending_swap(lv_vg_lite_grad_ctx_get_pending(u->grad_ctx));
+#endif
 
     lv_vg_lite_pending_swap(u->image_dsc_pending);
 
@@ -1346,10 +1349,10 @@ void lv_vg_lite_finish(struct _lv_draw_vg_lite_unit_t * u)
 
     LV_VG_LITE_CHECK_ERROR(vg_lite_finish(), {});
 
+#if LV_USE_VECTOR_GRAPHIC
     /* Clear all gradient caches reference */
-    if(u->grad_pending) {
-        lv_vg_lite_pending_remove_all(u->grad_pending);
-    }
+    lv_vg_lite_pending_remove_all(lv_vg_lite_grad_ctx_get_pending(u->grad_ctx));
+#endif
 
     /* Clear image decoder dsc reference */
     lv_vg_lite_pending_remove_all(u->image_dsc_pending);

@@ -170,6 +170,10 @@ if ($ENV{NON_AMD64_BUILD})
     set(CMAKE_LIBRARY_PATH "/usr/lib/i386-linux-gnu" CACHE PATH "search 32bit lib path firstly")
 endif()
 
+# Set LV_CONF_PATH so custom.cmake knows about it before compiling lvgl
+# Used to preprocess lv_conf_internal.h with the test config
+set(LV_CONF_PATH "${LVGL_TEST_DIR}/src/lv_test_conf.h")
+set(LV_BUILD_TEST ON)
 # Options lvgl and examples are compiled with.
 set(COMPILE_OPTIONS
     -DLV_CONF_PATH="${LVGL_TEST_DIR}/src/lv_test_conf.h"
@@ -354,6 +358,21 @@ endif()
 find_package(PNG REQUIRED)
 include_directories(${PNG_INCLUDE_DIR})
 
+if(NOT WIN32)
+    # FFmpeg is optional for the image and video test cases
+    find_package(PkgConfig)
+    pkg_check_modules(FFMPEG libavformat libavcodec libswscale libavutil)
+    if(FFMPEG_FOUND)
+        include_directories(${FFMPEG_INCLUDE_DIRS})
+    else()
+        message("FFmpeg not found, defaulting to 0")
+        add_definitions(-DLV_USE_FFMPEG=0)
+    endif()
+else()
+    message("Disable FFmpeg for Windows")
+    add_definitions(-DLV_USE_FFMPEG=0)
+endif()
+
 # libfreetype is required for the font test case
 find_package(Freetype REQUIRED)
 include_directories(${FREETYPE_INCLUDE_DIRS})
@@ -475,6 +494,7 @@ foreach( test_case_fname ${TEST_CASE_FILES} )
             ${LIBDRM_LIBRARIES}
             ${LIBINPUT_LIBRARIES}
             ${JPEG_LIBRARIES}
+            ${FFMPEG_LIBRARIES}
             m
             pthread
             ${TEST_LIBS})

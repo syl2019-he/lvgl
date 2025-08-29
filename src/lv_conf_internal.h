@@ -25,10 +25,10 @@
 #define LV_STDLIB_RTTHREAD          3
 #define LV_STDLIB_CUSTOM            255
 
-#define LV_DRAW_SW_ASM_NONE         0
-#define LV_DRAW_SW_ASM_NEON         1
-#define LV_DRAW_SW_ASM_HELIUM       2
-#define LV_DRAW_SW_ASM_CUSTOM       255
+#define LV_DRAW_SW_ASM_NONE             0
+#define LV_DRAW_SW_ASM_NEON             1
+#define LV_DRAW_SW_ASM_HELIUM           2
+#define LV_DRAW_SW_ASM_CUSTOM           255
 
 #define LV_NEMA_HAL_CUSTOM          0
 #define LV_NEMA_HAL_STM32           1
@@ -1545,6 +1545,15 @@
         #else
             #define LV_VG_LITE_THORVG_THREAD_RENDER 0
         #endif
+    #endif
+#endif
+
+/* Enable usage of the LVGL's vg_lite spec driver */
+#ifndef LV_USE_VG_LITE_DRIVER
+    #ifdef CONFIG_LV_USE_VG_LITE_DRIVER
+        #define LV_USE_VG_LITE_DRIVER CONFIG_LV_USE_VG_LITE_DRIVER
+    #else
+        #define LV_USE_VG_LITE_DRIVER  0
     #endif
 #endif
 
@@ -3137,6 +3146,15 @@
     #endif
 #endif
 
+/** Requires `LV_USE_3DTEXTURE = 1` */
+#ifndef LV_USE_GLTF
+    #ifdef CONFIG_LV_USE_GLTF
+        #define LV_USE_GLTF CONFIG_LV_USE_GLTF
+    #else
+        #define LV_USE_GLTF  0
+    #endif
+#endif
+
 /** Enable Vector Graphic APIs
  *  - Requires `LV_USE_MATRIX = 1` */
 #ifndef LV_USE_VECTOR_GRAPHIC
@@ -4535,6 +4553,15 @@
             #define LV_USE_DEMO_VECTOR_GRAPHIC CONFIG_LV_USE_DEMO_VECTOR_GRAPHIC
         #else
             #define LV_USE_DEMO_VECTOR_GRAPHIC  0
+        #endif
+    #endif
+
+    /** GLTF demo */
+    #ifndef LV_USE_DEMO_GLTF
+        #ifdef CONFIG_LV_USE_DEMO_GLTF
+            #define LV_USE_DEMO_GLTF CONFIG_LV_USE_DEMO_GLTF
+        #else
+            #define LV_USE_DEMO_GLTF            0
         #endif
     #endif
 
